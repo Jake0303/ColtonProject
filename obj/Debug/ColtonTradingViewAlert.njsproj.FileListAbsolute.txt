@@ -1,0 +1,3 @@
+C:\Users\Jake0\source\repos\ColtonTradingViewAlert\obj\Debug\ColtonTradingViewAlert.njsprojAssemblyReference.cache
+C:\Users\Jake0\source\repos\ColtonTradingViewAlert\obj\Debug\ColtonTradingViewAlert.njsproj.CoreCompileInputs.cache
+C:\Users\Jake0\source\repos\ColtonTradingViewAlert\bin\Microsoft.NodejsTools.WebRole.dll
