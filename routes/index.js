@@ -86,7 +86,7 @@ function resetAccessToken(done) {
             },
             form: {
                 'grant_type': 'refresh_token',
-                'refresh_token': process.env.accesstoken,
+                'refresh_token': process.env.refreshtoken,
                 'access_type': '',
                 'client_id': process.env.CLIENT_ID
             }
