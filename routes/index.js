@@ -9,7 +9,7 @@ router.get('/', function (req, res) {
     res.render('index', { title: 'Express' });
 });
 
-function submitOrder(side, qty, symbol) {
+function submitOrder(side, qty, symbol, alert) {
     /*
      * Entry Order
      */
@@ -70,7 +70,7 @@ function submitOrder(side, qty, symbol) {
                     /*
                      * Profit Target and Stop Loss OCO / Bracket Order
                      */
-                    if (req.body.profitTarget && req.body.stopLoss) {
+                    if (alert.profitTarget && alert.stopLoss) {
                         var orderObject = {
                             "orderStrategyType": "OCO",
                             "childOrderStrategies": [
@@ -78,7 +78,7 @@ function submitOrder(side, qty, symbol) {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
                                     "duration": "DAY",
-                                    "price": '"' + req.body.close * (1 + (parseFloat(req.body.profitTarget) / 100)) + '"',
+                                    "price": '"' + alert.close * (1 + (parseFloat(alert.profitTarget) / 100)) + '"',
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -95,7 +95,7 @@ function submitOrder(side, qty, symbol) {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
                                     "duration": "DAY",
-                                    "price": '"' + req.body.close * (1 - (parseFloat(req.body.stopLoss) / 100)) + '"',
+                                    "price": '"' + alert.close * (1 - (parseFloat(alert.stopLoss) / 100)) + '"',
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -130,12 +130,12 @@ function submitOrder(side, qty, symbol) {
                     /*
                     * Just Profit Target
                     */
-                    else if (req.body.profitTarget && req.body.stopLoss) {
+                    else if (alert.profitTarget && alert.stopLoss) {
                         var orderObject = {
                             "orderType": "LIMIT",
                             "session": "NORMAL",
                             "duration": "DAY",
-                            "price": '"' + req.body.close * (1 + (parseFloat(req.body.profitTarget) / 100)) + '"',
+                            "price": '"' + alert.close * (1 + (parseFloat(alert.profitTarget) / 100)) + '"',
                             "orderStrategyType": "SINGLE",
                             "orderLegCollection": [
                                 {
