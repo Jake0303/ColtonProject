@@ -39,6 +39,7 @@ function submitOrder(side, qty, symbol) {
     request(account_req, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
+            console.log(body);
             var accountId = body[0]['securitiesAccount']['accountId'];
             //Place Order
             var placeorder_req = {
