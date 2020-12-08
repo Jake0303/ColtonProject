@@ -64,6 +64,10 @@ function submitOrder(side, symbol, alert) {
                         submitOrder(side, qty, symbol);
                     });
                 } else {
+                    if (side == "BUY")
+                        side = "SELL";
+                    else
+                        side = "BUY";
                     /*
                      * Exit Order
                      */
