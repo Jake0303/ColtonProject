@@ -10,6 +10,9 @@ router.get('/', function (req, res) {
 });
 
 function submitOrder(side, qty, symbol) {
+    /*
+     * Entry Order
+     */
     var orderObject = {
         "orderType": "MARKET",
         "session": "NORMAL",
@@ -59,6 +62,109 @@ function submitOrder(side, qty, symbol) {
                     resetAccessToken(function () {
                         submitOrder(side, qty, symbol);
                     });
+                } else {
+                    /*
+                     * Exit Order
+                     */
+
+                    /*
+                     * Profit Target and Stop Loss OCO / Bracket Order
+                     */
+                    if (req.body.profitTarget && req.body.stopLoss) {
+                        var orderObject = {
+                            "orderStrategyType": "OCO",
+                            "childOrderStrategies": [
+                                {
+                                    "orderType": "LIMIT",
+                                    "session": "NORMAL",
+                                    "duration": "DAY",
+                                    "price": '"' + req.body.close * (1 + (parseFloat(req.body.profitTarget) / 100)) + '"',
+                                    "orderStrategyType": "SINGLE",
+                                    "orderLegCollection": [
+                                        {
+                                            "instruction": side,
+                                            "quantity": qty,
+                                            "instrument": {
+                                                "symbol": symbol,
+                                                "assetType": "EQUITY"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "orderType": "LIMIT",
+                                    "session": "NORMAL",
+                                    "duration": "DAY",
+                                    "price": '"' + req.body.close * (1 - (parseFloat(req.body.stopLoss) / 100)) + '"',
+                                    "orderStrategyType": "SINGLE",
+                                    "orderLegCollection": [
+                                        {
+                                            "instruction": side,
+                                            "quantity": qty,
+                                            "instrument": {
+                                                "symbol": symbol,
+                                                "assetType": "EQUITY"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                        //Place Order
+                        var placeorder_req = {
+                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + accesstoken,
+                                'content-type': 'application/json',
+                                'connection': 'Keep-Alive'
+                            },
+                            body: orderObject,
+                            json: true
+                        };
+                        console.log(JSON.stringify(orderObject));
+                        request(placeorder_req, function (error, response, body) {
+                            console.log(body);
+                        });
+                    }
+                    /*
+                    * Just Profit Target
+                    */
+                    else if (req.body.profitTarget && req.body.stopLoss) {
+                        var orderObject = {
+                            "orderType": "LIMIT",
+                            "session": "NORMAL",
+                            "duration": "DAY",
+                            "price": '"' + req.body.close * (1 + (parseFloat(req.body.profitTarget) / 100)) + '"',
+                            "orderStrategyType": "SINGLE",
+                            "orderLegCollection": [
+                                {
+                                    "instruction": side,
+                                    "quantity": qty,
+                                    "instrument": {
+                                        "symbol": symbol,
+                                        "assetType": "EQUITY"
+                                    }
+                                }
+                            ]
+                        }
+                        //Place Order
+                        var placeorder_req = {
+                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + accesstoken,
+                                'content-type': 'application/json',
+                                'connection': 'Keep-Alive'
+                            },
+                            body: orderObject,
+                            json: true
+                        };
+                        console.log(JSON.stringify(orderObject));
+                        request(placeorder_req, function (error, response, body) {
+                            console.log(body);
+                        });
+                    }
                 }
             });
         } else {
@@ -71,8 +177,7 @@ function submitOrder(side, qty, symbol) {
 
 //Colton Alert
 router.post('/coltonalert', function (req, res, next) {
-    console.log(req.body);
-    submitOrder(req.body.side.toUpperCase(), req.body.quantity, req.body.symbol.toUpperCase());
+    submitOrder(req.body.side.toUpperCase(), req.body.quantity, req.body.symbol.toUpperCase(), req.body);
     res.status(200).end() // Responding is important
 });
 
