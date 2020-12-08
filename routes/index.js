@@ -9,10 +9,11 @@ router.get('/', function (req, res) {
     res.render('index', { title: 'Express' });
 });
 
-function submitOrder(side, qty, symbol, alert) {
+function submitOrder(side, symbol, alert) {
     /*
      * Entry Order
      */
+    var qty = Math.round(parseFloat(alert.accountSize) / parseFloat(alert.close));
     var orderObject = {
         "orderType": "MARKET",
         "session": "NORMAL",
@@ -177,7 +178,7 @@ function submitOrder(side, qty, symbol, alert) {
 
 //Colton Alert
 router.post('/coltonalert', function (req, res, next) {
-    submitOrder(req.body.side.toUpperCase(), req.body.quantity, req.body.symbol.toUpperCase(), req.body);
+    submitOrder(req.body.side.toUpperCase(), req.body.symbol.toUpperCase(), req.body);
     res.status(200).end() // Responding is important
 });
 
