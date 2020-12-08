@@ -78,7 +78,7 @@ function submitOrder(side, qty, symbol, alert) {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
                                     "duration": "DAY",
-                                    "price": '"' + alert.close * (1 + (parseFloat(alert.profitTarget) / 100)) + '"',
+                                    "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -95,7 +95,7 @@ function submitOrder(side, qty, symbol, alert) {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
                                     "duration": "DAY",
-                                    "price": '"' + alert.close * (1 - (parseFloat(alert.stopLoss) / 100)) + '"',
+                                    "price": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -135,7 +135,7 @@ function submitOrder(side, qty, symbol, alert) {
                             "orderType": "LIMIT",
                             "session": "NORMAL",
                             "duration": "DAY",
-                            "price": '"' + alert.close * (1 + (parseFloat(alert.profitTarget) / 100)) + '"',
+                            "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
                             "orderStrategyType": "SINGLE",
                             "orderLegCollection": [
                                 {
