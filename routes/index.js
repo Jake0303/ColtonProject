@@ -1,4 +1,3 @@
-//colton
 'use strict';
 var express = require('express');
 var router = express.Router();
@@ -53,10 +52,10 @@ function submitOrder(side, qty, symbol) {
                 body: orderObject,
                 json: true
             };
+            console.log(JSON.stringify(orderObject));
             request(placeorder_req, function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    console.log(body);
-                } else {
+                console.log(body);
+                if (response.statusCode >= 400) {
                     resetAccessToken(function () {
                         submitOrder(side, qty, symbol);
                     });
@@ -113,5 +112,5 @@ function resetAccessToken(done) {
     }
 
 }
-resetAccessToken(function () {});
+resetAccessToken(function () { });
 module.exports = router;
