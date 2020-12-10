@@ -1,6 +1,6 @@
 /*
  * Colton TradingView Alert
- */ 
+ */
 'use strict';
 var express = require('express');
 var router = express.Router();
@@ -53,6 +53,7 @@ function submitOrder(side, symbol, alert) {
                  * Check if we have any existing positions, if we do flip sides
                  */
                 if (pos.instrument.symbol == symbol) {
+                    found = true;
                     /*
                      * If we are short and get a buy signal, buy to cover and enter long
                      */
@@ -151,7 +152,6 @@ function submitOrder(side, symbol, alert) {
                                     console.log(JSON.stringify(orderObject));
                                     request(placeorder_req, function (error, response, body) {
                                         console.log(body);
-                                        found = true;
                                         inner_callback();
                                     });
                                 }
@@ -191,7 +191,6 @@ function submitOrder(side, symbol, alert) {
                                     console.log(JSON.stringify(orderObject));
                                     request(placeorder_req, function (error, response, body) {
                                         console.log(body);
-                                        found = true;
                                         inner_callback();
                                     });
                                 }
