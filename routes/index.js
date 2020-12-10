@@ -92,6 +92,10 @@ function submitOrder(side, symbol, alert) {
                                 /*
                                  * Profit Target and Stop Loss OCO / Bracket Order
                                  */
+                                if (side == "BUY")
+                                    side = "SELL";
+                                else
+                                    side = "BUY";
                                 if (alert.profitTarget && alert.stopLoss) {
                                     var orderObject = {
                                         "orderStrategyType": "OCO",
@@ -224,6 +228,10 @@ function submitOrder(side, symbol, alert) {
                             /*
                              * Profit Target and Stop Loss OCO / Bracket Order
                              */
+                            if (side == "BUY")
+                                side = "SELL";
+                            else
+                                side = "BUY";
                             if (alert.profitTarget && alert.stopLoss) {
                                 var orderObject = {
                                     "orderStrategyType": "OCO",
@@ -279,7 +287,6 @@ function submitOrder(side, symbol, alert) {
                                 console.log(JSON.stringify(orderObject));
                                 request(placeorder_req, function (error, response, body) {
                                     console.log(body);
-                                    inner_callback();
                                 });
                             }
                             /*
@@ -318,7 +325,6 @@ function submitOrder(side, symbol, alert) {
                                 console.log(JSON.stringify(orderObject));
                                 request(placeorder_req, function (error, response, body) {
                                     console.log(body);
-                                    inner_callback();
                                 });
                             }
                         }
