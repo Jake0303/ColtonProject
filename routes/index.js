@@ -45,6 +45,7 @@ function submitOrder(side, symbol, alert) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
             console.log(body);
+<<<<<<< HEAD
             async.each(body[index]['securitiesAccount']['positions'], function (pos, inner_callback) {
                 /*
                  * Check if we have any existing positions, if we do flip sides
@@ -319,6 +320,27 @@ function submitOrder(side, symbol, alert) {
                                 });
                             }
                         }
+=======
+            var accountId = body[0]['securitiesAccount']['accountId'];
+            //Place Order
+            var placeorder_req = {
+                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accesstoken,
+                    'content-type': 'application/json',
+                    'connection': 'Keep-Alive'
+                },
+                body: orderObject,
+                json: true
+            };
+            request(placeorder_req, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    console.log(body);
+                } else {
+                    resetAccessToken(function () {
+                        submitOrder(side, qty, symbol);
+>>>>>>> 64f455ef65c8943b10e426b86d4af39242766151
                     });
                 }
             });
