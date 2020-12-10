@@ -77,7 +77,7 @@ function submitOrder(side, symbol, alert) {
                      */
                     //Get current orders
                     var order_req = {
-                        url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders?status=WORKING',
+                        url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
