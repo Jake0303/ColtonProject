@@ -90,13 +90,20 @@ function submitOrder(side, symbol, alert) {
                                     submitOrder(side, qty, symbol);
                                 });
                             } else {
+                                var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                                var stopPrice = (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString();
                                 /*
                                  * Profit Target and Stop Loss OCO / Bracket Order
                                  */
-                                if (side == "BUY")
+                                if (side == "BUY") {
                                     side = "SELL";
-                                else
+
+                                }
+                                else {
                                     side = "BUY";
+                                    profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                                    stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
+                                }
                                 if (alert.profitTarget && alert.stopLoss) {
                                     var orderObject = {
                                         "orderStrategyType": "OCO",
@@ -105,7 +112,7 @@ function submitOrder(side, symbol, alert) {
                                                 "orderType": "LIMIT",
                                                 "session": "NORMAL",
                                                 "duration": "DAY",
-                                                "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
+                                                "price": profitPrice,
                                                 "orderStrategyType": "SINGLE",
                                                 "orderLegCollection": [
                                                     {
@@ -122,7 +129,7 @@ function submitOrder(side, symbol, alert) {
                                                 "orderType": "STOP",
                                                 "session": "NORMAL",
                                                 "duration": "DAY",
-                                                "stopPrice": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
+                                                "stopPrice": stopPrice,
                                                 "orderStrategyType": "SINGLE",
                                                 "orderLegCollection": [
                                                     {
@@ -163,7 +170,7 @@ function submitOrder(side, symbol, alert) {
                                         "orderType": "LIMIT",
                                         "session": "NORMAL",
                                         "duration": "DAY",
-                                        "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
+                                        "price": profitPrice,
                                         "orderStrategyType": "SINGLE",
                                         "orderLegCollection": [
                                             {
@@ -224,13 +231,20 @@ function submitOrder(side, symbol, alert) {
                                 submitOrder(side, qty, symbol);
                             });
                         } else {
+                            var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                            var stopPrice = (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString();
                             /*
                              * Profit Target and Stop Loss OCO / Bracket Order
                              */
-                            if (side == "BUY")
+                            if (side == "BUY") {
                                 side = "SELL";
-                            else
+
+                            }
+                            else {
                                 side = "BUY";
+                                profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                                stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
+                            }
                             if (alert.profitTarget && alert.stopLoss) {
                                 var orderObject = {
                                     "orderStrategyType": "OCO",
@@ -239,7 +253,7 @@ function submitOrder(side, symbol, alert) {
                                             "orderType": "LIMIT",
                                             "session": "NORMAL",
                                             "duration": "DAY",
-                                            "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
+                                            "price": profitPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
                                                 {
@@ -256,7 +270,7 @@ function submitOrder(side, symbol, alert) {
                                             "orderType": "STOP",
                                             "session": "NORMAL",
                                             "duration": "DAY",
-                                            "stopPrice": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
+                                            "stopPrice": stopPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
                                                 {
@@ -296,7 +310,7 @@ function submitOrder(side, symbol, alert) {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
                                     "duration": "DAY",
-                                    "price": (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString(),
+                                    "price": profitPrice,
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
