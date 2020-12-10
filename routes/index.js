@@ -48,7 +48,7 @@ function submitOrder(side, symbol, alert) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
             console.log(body);
-            async.each(body[index]['securitiesAccount']['positions'], function (pos, inner_callback) {
+            async.each(body[0]['securitiesAccount']['positions'], function (pos, inner_callback) {
                 /*
                  * Check if we have any existing positions, if we do flip sides
                  */
