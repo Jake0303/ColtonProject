@@ -18,7 +18,7 @@ function submitOrder(side, symbol, alert) {
      * Entry Order
      */
     var found = false;
-    var qty = Math.round(parseFloat(alert.accountSize) / parseFloat(alert.close));
+    var qty = Math.floor(parseFloat(alert.accountSize) / parseFloat(alert.close));
     //Get main account id
     var account_req = {
         url: 'https://api.tdameritrade.com/v1/accounts?fields=positions',
