@@ -118,10 +118,10 @@ function submitOrder(side, symbol, alert) {
                                                 ]
                                             },
                                             {
-                                                "orderType": "LIMIT",
+                                                "orderType": "STOP",
                                                 "session": "NORMAL",
                                                 "duration": "DAY",
-                                                "price": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
+                                                "stopPrice": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
                                                 "orderStrategyType": "SINGLE",
                                                 "orderLegCollection": [
                                                     {
@@ -158,7 +158,7 @@ function submitOrder(side, symbol, alert) {
                                 /*
                                 * Just Profit Target
                                 */
-                                else if (alert.profitTarget && alert.stopLoss) {
+                                else if (alert.profitTarget) {
                                     var orderObject = {
                                         "orderType": "LIMIT",
                                         "session": "NORMAL",
@@ -254,10 +254,10 @@ function submitOrder(side, symbol, alert) {
                                             ]
                                         },
                                         {
-                                            "orderType": "LIMIT",
+                                            "orderType": "STOP",
                                             "session": "NORMAL",
                                             "duration": "DAY",
-                                            "price": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
+                                            "stopPrice": (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString(),
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
                                                 {
@@ -292,7 +292,7 @@ function submitOrder(side, symbol, alert) {
                             /*
                             * Just Profit Target
                             */
-                            else if (alert.profitTarget && alert.stopLoss) {
+                            else if (alert.profitTarget) {
                                 var orderObject = {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
