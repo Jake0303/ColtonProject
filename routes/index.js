@@ -53,7 +53,7 @@ function submitOrder(side, symbol, alert) {
                 /*
                  * Check if we have any existing positions, if we do flip sides
                  */
-                if (pos.instrument.symbol.toUpperCase() == symbol.toUpperCase()) {
+                if (symbol && pos.instrument.symbol.toUpperCase() == symbol.toUpperCase()) {
                     found = true;
                     /*
                      * If we are short and get a buy signal, buy to cover and enter long
@@ -89,10 +89,11 @@ function submitOrder(side, symbol, alert) {
                          * Loop and cancel all previous bracket orders
                          */
                         var orders = JSON.parse(body);
+                        console.log(orders);
                         async.each(orders, function (order, inner_callback2) {
                             //Cancel Order
                             var cancelorder_req = {
-                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId,
+                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId+'',
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded',
