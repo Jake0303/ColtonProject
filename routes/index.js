@@ -57,14 +57,12 @@ function submitOrder(side, symbol, alert) {
                     /*
                      * If we are short and get a buy signal, buy to cover and enter long
                      */
-                    if (pos.instrument.shortQuantity > 0
-                        && side == "BUY") {
+                    if (pos.instrument.shortQuantity > 0) {
                         /*
                         * 1.) Exit short position
                         */
-                        side = "BUY";
-                    } else if (pos.instrument.longQuantity > 0
-                        && side == "SELL") {
+                        side = "BUY_TO_COVER";
+                    } else if (pos.instrument.longQuantity > 0) {
                         /*
                         * 1.) Exit long position
                         */
@@ -143,6 +141,11 @@ function submitOrder(side, symbol, alert) {
                                     /*
                                     * 4.) Enter new position
                                     */
+                                    if (side == "BUY_TO_COVER")
+                                        side = "BUY";
+                                    else {
+                                        side = "SELL_SHORT";
+                                    }
                                     orderObject = {
                                         "orderType": "MARKET",
                                         "session": "NORMAL",
