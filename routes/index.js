@@ -93,7 +93,7 @@ function submitOrder(side, symbol, alert) {
                         async.each(orders, function (order, inner_callback2) {
                             //Cancel Order
                             var cancelorder_req = {
-                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId+'',
+                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -105,7 +105,22 @@ function submitOrder(side, symbol, alert) {
                                 inner_callback2();
                             });
                         }, function (err) {
-
+                            orderObject = {
+                                "orderType": "MARKET",
+                                "session": "NORMAL",
+                                "duration": "DAY",
+                                "orderStrategyType": "SINGLE",
+                                "orderLegCollection": [
+                                    {
+                                        "instruction": side,
+                                        "quantity": qty,
+                                        "instrument": {
+                                            "symbol": symbol,
+                                            "assetType": "EQUITY"
+                                        }
+                                    }
+                                ]
+                            }
 
                             //Place Order
                             var placeorder_req = {
