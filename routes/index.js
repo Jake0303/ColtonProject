@@ -285,7 +285,7 @@ function submitOrder(side, symbol, alert) {
                                                     });
                                                 }
                                             });
-                                        }, 10000);
+                                        }, 5000);
                                     }
                                 });
                             });
