@@ -53,7 +53,7 @@ function submitOrder(side, symbol, alert) {
                  * Check if we have any existing positions, if we do flip sides
                  */
                 try {
-                    if (symbol && pos.instrument.symbol.toUpperCase() == symbol.toUpperCase()) {
+                    if (pos.instrument.symbol.toUpperCase() == symbol) {
                         found = true;
                         var accountId = body[0]['securitiesAccount']['accountId'];
                         /*
@@ -136,7 +136,7 @@ function submitOrder(side, symbol, alert) {
                                 request(placeorder_req, function (error, response, body) {
                                     if (response.statusCode >= 400) {
                                         resetAccessToken(function () {
-                                            submitOrder(side, qty, symbol);
+                                            submitOrder(side, symbol, alert);
                                         });
                                     } else {
                                         /*
@@ -315,7 +315,7 @@ function submitOrder(side, symbol, alert) {
                     request(placeorder_req, function (error, response, body) {
                         if (response.statusCode >= 400) {
                             resetAccessToken(function () {
-                                submitOrder(side, qty, symbol);
+                                submitOrder(side, symbol, alert);
                             });
                         } else {
                             var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
@@ -430,7 +430,7 @@ function submitOrder(side, symbol, alert) {
 
         } else {
             resetAccessToken(function () {
-                submitOrder(side, qty, symbol);
+                submitOrder(side, symbol, alert);
             });
         }
     });
