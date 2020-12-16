@@ -134,11 +134,8 @@ function submitOrder(side, symbol, alert) {
                                 };
 
                                 request(placeorder_req, function (error, response, body) {
-                                    if (response.statusCode >= 400) {
-                                        resetAccessToken(function () {
-                                            submitOrder(side, symbol, alert);
-                                        });
-                                    } else {
+                                    if (response.statusCode == 200) {
+
                                         /*
                                         * 4.) Enter new position
                                         */
@@ -286,11 +283,14 @@ function submitOrder(side, symbol, alert) {
                                                 }
                                             });
                                         }, 5000);
+
+                                    } else {
+                                        console.log(body)
                                     }
                                 });
                             });
                         });
-                    }
+                    } else inner_callback();
                 } catch (err) {
                     console.log(err);
                 }
