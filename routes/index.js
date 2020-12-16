@@ -61,7 +61,7 @@ function submitOrder(side, symbol, alert) {
                          */
                         //Get current orders
                         var order_req = {
-                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders?status=ACCEPTED',
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -283,6 +283,8 @@ function submitOrder(side, symbol, alert) {
                                             });
 
                                         } else {
+                                            console.log(error);
+                                            console.log(response);
                                             console.log(body)
                                         }
                                     }, 10000);
