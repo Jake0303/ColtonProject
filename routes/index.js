@@ -132,35 +132,34 @@ function submitOrder(side, symbol, alert) {
                                     body: orderObject,
                                     json: true
                                 };
+                                setTimeout(function () {
+                                    request(placeorder_req, function (error, response, body) {
+                                        if (response.statusCode == 200) {
 
-                                request(placeorder_req, function (error, response, body) {
-                                    if (response.statusCode == 200) {
-
-                                        /*
-                                        * 4.) Enter new position
-                                        */
-                                        if (side == "BUY_TO_COVER")
-                                            side = "BUY";
-                                        else {
-                                            side = "SELL_SHORT";
-                                        }
-                                        orderObject = {
-                                            "orderType": "MARKET",
-                                            "session": "NORMAL",
-                                            "duration": "DAY",
-                                            "orderStrategyType": "SINGLE",
-                                            "orderLegCollection": [
-                                                {
-                                                    "instruction": side,
-                                                    "quantity": qty,
-                                                    "instrument": {
-                                                        "symbol": symbol,
-                                                        "assetType": "EQUITY"
+                                            /*
+                                            * 4.) Enter new position
+                                            */
+                                            if (side == "BUY_TO_COVER")
+                                                side = "BUY";
+                                            else {
+                                                side = "SELL_SHORT";
+                                            }
+                                            orderObject = {
+                                                "orderType": "MARKET",
+                                                "session": "NORMAL",
+                                                "duration": "DAY",
+                                                "orderStrategyType": "SINGLE",
+                                                "orderLegCollection": [
+                                                    {
+                                                        "instruction": side,
+                                                        "quantity": qty,
+                                                        "instrument": {
+                                                            "symbol": symbol,
+                                                            "assetType": "EQUITY"
+                                                        }
                                                     }
-                                                }
-                                            ]
-                                        }
-                                        setTimeout(function () {
+                                                ]
+                                            }
                                             //Place Order
                                             var placeorder_req = {
                                                 url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
@@ -282,11 +281,11 @@ function submitOrder(side, symbol, alert) {
                                                     });
                                                 }
                                             });
-                                        }, 5000);
 
-                                    } else {
-                                        console.log(body)
-                                    }
+                                        } else {
+                                            console.log(body)
+                                        }
+                                    }, 10000);
                                 });
                             });
                         });
