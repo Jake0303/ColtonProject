@@ -55,20 +55,6 @@ function submitOrder(side, symbol, alert) {
                 try {
                     if (symbol && pos.instrument.symbol.toUpperCase() == symbol.toUpperCase()) {
                         found = true;
-                        /*
-                         * If we are short and get a buy signal, buy to cover and enter long
-                         */
-                        if (pos.instrument.shortQuantity > 0) {
-                            /*
-                            * 1.) Exit short position
-                            */
-                            side = "BUY_TO_COVER";
-                        } else if (pos.instrument.longQuantity > 0) {
-                            /*
-                            * 1.) Exit long position
-                            */
-                            side = "SELL";
-                        }
                         var accountId = body[0]['securitiesAccount']['accountId'];
                         /*
                          * 2.) Cancel previous orders
@@ -101,6 +87,20 @@ function submitOrder(side, symbol, alert) {
                                     inner_callback2();
                                 });
                             }, function (err) {
+                                /*
+                                * If we are short and get a buy signal, buy to cover and enter long
+                                */
+                                if (pos.instrument.shortQuantity > 0) {
+                                    /*
+                                    * 1.) Exit short position
+                                    */
+                                    side = "BUY_TO_COVER";
+                                } else if (pos.instrument.longQuantity > 0) {
+                                    /*
+                                    * 1.) Exit long position
+                                    */
+                                    side = "SELL";
+                                }
                                 /*
                                  * 3.) Exit out of previous position
                                  */
@@ -328,7 +328,7 @@ function submitOrder(side, symbol, alert) {
 
                             }
                             else {
-                                side = "BUY";
+                                side = "BUY_TO_COVER";
                                 profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
                                 stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
                             }
