@@ -75,7 +75,8 @@ function submitOrder(side, symbol, alert) {
                              */
                             var orders = JSON.parse(body);
                             async.each(orders, function (order, inner_callback2) {
-                                async.each(order.orderLegCollection, function (orderLeg, inner_callback3) {
+                                console.log(order.childOrderStrategies);
+                                async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
                                     if (symbol == orderLeg.instrument.symbol.toUpperCase()) {
                                         //Cancel Order
                                         var cancelorder_req = {
