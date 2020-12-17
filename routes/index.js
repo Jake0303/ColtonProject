@@ -75,20 +75,21 @@ function submitOrder(side, symbol, alert) {
                              */
                             var orders = JSON.parse(body);
                             async.each(orders, function (order, inner_callback2) {
-                                //Cancel Order
-                                var cancelorder_req = {
-                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
-                                    method: 'DELETE',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded',
-                                        'Authorization': 'Bearer ' + accesstoken
-                                    }
-                                }
-                                async.each(orders.orderLegCollection, function (orderLeg, inner_callback3) {
-                                    if (symbol == orderLeg.instrument.symbol.toUpperCase())
+                                async.each(order.orderLegCollection, function (orderLeg, inner_callback3) {
+                                    if (symbol == orderLeg.instrument.symbol.toUpperCase()) {
+                                        //Cancel Order
+                                        var cancelorder_req = {
+                                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                'Authorization': 'Bearer ' + accesstoken
+                                            }
+                                        }
                                         request(cancelorder_req, function (error, response, body) {
                                             inner_callback3();
                                         });
+                                    }
                                     else
                                         inner_callback3();
                                 }, function (err) {
