@@ -75,7 +75,6 @@ function submitOrder(side, symbol, alert) {
                              */
                             var orders = JSON.parse(body);
                             async.each(orders, function (order, inner_callback2) {
-                                console.log(order.status);
                                 //Cancel Order
                                 var cancelorder_req = {
                                     url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
@@ -92,12 +91,12 @@ function submitOrder(side, symbol, alert) {
                                 /*
                                 * If we are short and get a buy signal, buy to cover and enter long
                                 */
-                                if (pos.instrument.shortQuantity > 0) {
+                                if (pos.instrument.shortQuantity || pos.instrument.settledShortQuantity) {
                                     /*
                                     * 1.) Exit short position
                                     */
                                     side = "BUY_TO_COVER";
-                                } else if (pos.instrument.longQuantity > 0) {
+                                } else {
                                     /*
                                     * 1.) Exit long position
                                     */
@@ -136,7 +135,6 @@ function submitOrder(side, symbol, alert) {
                                 };
                                 setTimeout(function () {
                                     request(placeorder_req, function (error, response, body) {
-                                        console.log(error);
                                         console.log(body);
                                         console.log(side);
                                         /*
