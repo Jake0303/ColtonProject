@@ -77,22 +77,26 @@ function submitOrder(side, symbol, alert) {
                             async.each(orders, function (order, inner_callback2) {
                                 console.log(order.childOrderStrategies);
                                 async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
-                                    if (symbol == orderLeg.instrument.symbol.toUpperCase()) {
-                                        //Cancel Order
-                                        var cancelorder_req = {
-                                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
-                                            method: 'DELETE',
-                                            headers: {
-                                                'Content-Type': 'application/x-www-form-urlencoded',
-                                                'Authorization': 'Bearer ' + accesstoken
+                                    async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
+                                        if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
+                                            //Cancel Order
+                                            var cancelorder_req = {
+                                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
+                                                method: 'DELETE',
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                                    'Authorization': 'Bearer ' + accesstoken
+                                                }
                                             }
+                                            request(cancelorder_req, function (error, response, body) {
+                                                inner_callback4();
+                                            });
                                         }
-                                        request(cancelorder_req, function (error, response, body) {
-                                            inner_callback3();
-                                        });
-                                    }
-                                    else
+                                        else
+                                            inner_callback4();
+                                    }, function (err) {
                                         inner_callback3();
+                                    });
                                 }, function (err) {
                                     inner_callback2();
                                 });
