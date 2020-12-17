@@ -91,7 +91,7 @@ function submitOrder(side, symbol, alert) {
                                 /*
                                 * If we are short and get a buy signal, buy to cover and enter long
                                 */
-                                if (pos.instrument.shortQuantity || pos.instrument.settledShortQuantity) {
+                                if (pos.shortQuantity || pos.settledShortQuantity) {
                                     /*
                                     * 1.) Exit short position
                                     */
