@@ -84,7 +84,14 @@ function submitOrder(side, symbol, alert) {
                                         'Authorization': 'Bearer ' + accesstoken
                                     }
                                 }
-                                request(cancelorder_req, function (error, response, body) {
+                                async.each(orders.orderLegCollection, function (orderLeg, inner_callback3) {
+                                    if (symbol == orderLeg.instrument.symbol.toUpperCase())
+                                        request(cancelorder_req, function (error, response, body) {
+                                            inner_callback3();
+                                        });
+                                    else
+                                        inner_callback3();
+                                }, function (err) {
                                     inner_callback2();
                                 });
                             }, function (err) {
