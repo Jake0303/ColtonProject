@@ -311,6 +311,8 @@ function submitOrder(side, symbol, alert) {
                  */
                 if (!found) {
                     var accountId = body[0]['securitiesAccount']['accountId'];
+                    if (side == "SELL")
+                        orderObject.orderLegCollection[0].instruction = "SELL_SHORT";
                     //Place Order
                     var placeorder_req = {
                         url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
