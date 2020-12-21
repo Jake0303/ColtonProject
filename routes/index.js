@@ -32,7 +32,7 @@ function submitOrder(side, symbol, alert) {
     var orderObject = {
         "orderType": "MARKET",
         "session": "NORMAL",
-        "duration": "GOOD_TILL_CANCEL",
+        "duration": "DAY",
         "orderStrategyType": "SINGLE",
         "orderLegCollection": [
             {
@@ -121,7 +121,7 @@ function submitOrder(side, symbol, alert) {
                                 orderObject = {
                                     "orderType": "MARKET",
                                     "session": "NORMAL",
-                                    "duration": "GOOD_TILL_CANCEL",
+                                    "duration": "DAY",
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -161,7 +161,7 @@ function submitOrder(side, symbol, alert) {
                                         orderObject = {
                                             "orderType": "MARKET",
                                             "session": "NORMAL",
-                                            "duration": "GOOD_TILL_CANCEL",
+                                            "duration": "DAY",
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
                                                 {
@@ -208,7 +208,7 @@ function submitOrder(side, symbol, alert) {
                                                         {
                                                             "orderType": "LIMIT",
                                                             "session": "NORMAL",
-                                                            "duration": "GOOD_TILL_CANCEL",
+                                                            "duration": "DAY",
                                                             "price": profitPrice,
                                                             "orderStrategyType": "SINGLE",
                                                             "orderLegCollection": [
@@ -225,7 +225,7 @@ function submitOrder(side, symbol, alert) {
                                                         {
                                                             "orderType": "STOP",
                                                             "session": "NORMAL",
-                                                            "duration": "GOOD_TILL_CANCEL",
+                                                            "duration": "DAY",
                                                             "stopPrice": stopPrice,
                                                             "orderStrategyType": "SINGLE",
                                                             "orderLegCollection": [
@@ -264,7 +264,7 @@ function submitOrder(side, symbol, alert) {
                                                 var orderObject = {
                                                     "orderType": "LIMIT",
                                                     "session": "NORMAL",
-                                                    "duration": "GOOD_TILL_CANCEL",
+                                                    "duration": "DAY",
                                                     "price": profitPrice,
                                                     "orderStrategyType": "SINGLE",
                                                     "orderLegCollection": [
@@ -351,7 +351,7 @@ function submitOrder(side, symbol, alert) {
                                         {
                                             "orderType": "LIMIT",
                                             "session": "NORMAL",
-                                            "duration": "GOOD_TILL_CANCEL",
+                                            "duration": "DAY",
                                             "price": profitPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
@@ -368,7 +368,7 @@ function submitOrder(side, symbol, alert) {
                                         {
                                             "orderType": "STOP",
                                             "session": "NORMAL",
-                                            "duration": "GOOD_TILL_CANCEL",
+                                            "duration": "DAY",
                                             "stopPrice": stopPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
@@ -406,7 +406,7 @@ function submitOrder(side, symbol, alert) {
                                 var orderObject = {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
-                                    "duration": "GOOD_TILL_CANCEL",
+                                    "duration": "DAY",
                                     "price": profitPrice,
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
