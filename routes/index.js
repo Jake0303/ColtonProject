@@ -32,7 +32,7 @@ function submitOrder(side, symbol, alert) {
     var orderObject = {
         "orderType": "MARKET",
         "session": "NORMAL",
-        "duration": "DAY",
+        "duration": "GOOD_TILL_CANCEL",
         "orderStrategyType": "SINGLE",
         "orderLegCollection": [
             {
@@ -121,7 +121,7 @@ function submitOrder(side, symbol, alert) {
                                 orderObject = {
                                     "orderType": "MARKET",
                                     "session": "NORMAL",
-                                    "duration": "DAY",
+                                    "duration": "GOOD_TILL_CANCEL",
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
                                         {
@@ -161,7 +161,7 @@ function submitOrder(side, symbol, alert) {
                                         orderObject = {
                                             "orderType": "MARKET",
                                             "session": "NORMAL",
-                                            "duration": "DAY",
+                                            "duration": "GOOD_TILL_CANCEL",
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
                                                 {
@@ -208,7 +208,7 @@ function submitOrder(side, symbol, alert) {
                                                         {
                                                             "orderType": "LIMIT",
                                                             "session": "NORMAL",
-                                                            "duration": "DAY",
+                                                            "duration": "GOOD_TILL_CANCEL",
                                                             "price": profitPrice,
                                                             "orderStrategyType": "SINGLE",
                                                             "orderLegCollection": [
@@ -225,7 +225,7 @@ function submitOrder(side, symbol, alert) {
                                                         {
                                                             "orderType": "STOP",
                                                             "session": "NORMAL",
-                                                            "duration": "DAY",
+                                                            "duration": "GOOD_TILL_CANCEL",
                                                             "stopPrice": stopPrice,
                                                             "orderStrategyType": "SINGLE",
                                                             "orderLegCollection": [
@@ -264,7 +264,7 @@ function submitOrder(side, symbol, alert) {
                                                 var orderObject = {
                                                     "orderType": "LIMIT",
                                                     "session": "NORMAL",
-                                                    "duration": "DAY",
+                                                    "duration": "GOOD_TILL_CANCEL",
                                                     "price": profitPrice,
                                                     "orderStrategyType": "SINGLE",
                                                     "orderLegCollection": [
@@ -325,9 +325,8 @@ function submitOrder(side, symbol, alert) {
                     };
                     request(placeorder_req, function (error, response, body) {
                         if (response.statusCode >= 400) {
-                            resetAccessToken(function () {
-                                submitOrder(side, symbol, alert);
-                            });
+                            console.log(error);
+                            console.log(body);
                         } else {
                             var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
                             var stopPrice = (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString();
@@ -350,7 +349,7 @@ function submitOrder(side, symbol, alert) {
                                         {
                                             "orderType": "LIMIT",
                                             "session": "NORMAL",
-                                            "duration": "DAY",
+                                            "duration": "GOOD_TILL_CANCEL",
                                             "price": profitPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
@@ -367,7 +366,7 @@ function submitOrder(side, symbol, alert) {
                                         {
                                             "orderType": "STOP",
                                             "session": "NORMAL",
-                                            "duration": "DAY",
+                                            "duration": "GOOD_TILL_CANCEL",
                                             "stopPrice": stopPrice,
                                             "orderStrategyType": "SINGLE",
                                             "orderLegCollection": [
@@ -405,7 +404,7 @@ function submitOrder(side, symbol, alert) {
                                 var orderObject = {
                                     "orderType": "LIMIT",
                                     "session": "NORMAL",
-                                    "duration": "DAY",
+                                    "duration": "GOOD_TILL_CANCEL",
                                     "price": profitPrice,
                                     "orderStrategyType": "SINGLE",
                                     "orderLegCollection": [
@@ -440,9 +439,19 @@ function submitOrder(side, symbol, alert) {
             });
 
         } else {
-            resetAccessToken(function () {
-                submitOrder(side, symbol, alert);
-            });
+            if (body && body.error) {
+                if (body.error.includes("transactions")) {
+                    console.log(body);
+                } else {
+                    resetAccessToken(function () {
+                        submitOrder(side, symbol, alert);
+                    });
+                }
+            } else {
+                resetAccessToken(function () {
+                    submitOrder(side, symbol, alert);
+                });
+            } S
         }
     });
 }
