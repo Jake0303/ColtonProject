@@ -116,7 +116,7 @@ function submitOrder(side, symbol, alert) {
                                 }
                             }, function (err) {
                                 if (found)
-                                    exitAndReEnter(pos, accountId);
+                                    exitAndReEnter(pos, accountId, inner_callback);
                             });
                         });
                     } else inner_callback();
@@ -275,7 +275,7 @@ function submitOrder(side, symbol, alert) {
         }
     });
 
-    function exitAndReEnter(pos, accountId) {
+    function exitAndReEnter(pos, accountId, inner_callback) {
         /*
         * If we are short and get a buy signal, buy to cover and enter long
         */
