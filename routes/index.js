@@ -54,7 +54,6 @@ function submitOrder(side, symbol, alert) {
                  */
                 try {
                     if (pos.instrument.symbol.toUpperCase() == symbol) {
-                        console.log(symbol);
                         found = true;
                         var accountId = body[0]['securitiesAccount']['accountId'];
                         /*
@@ -75,7 +74,6 @@ function submitOrder(side, symbol, alert) {
                              */
                             var orders = JSON.parse(body);
                             async.each(orders, function (order, inner_callback2) {
-                                console.log(order.childOrderStrategies);
                                 /*
                                 * No bracket order just regular order
                                 */
@@ -288,6 +286,7 @@ function submitOrder(side, symbol, alert) {
         /*
         * If we are short and get a buy signal, buy to cover and enter long
         */
+        console.log(pos);
         if (pos.shortQuantity || pos.settledShortQuantity) {
             /*
             * 1.) Exit short position
@@ -332,7 +331,6 @@ function submitOrder(side, symbol, alert) {
         };
         setTimeout(function () {
             request(placeorder_req, function (error, response, body) {
-                console.log(body);
                 console.log(side);
                 /*
                 * 4.) Enter new position
