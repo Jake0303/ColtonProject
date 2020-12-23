@@ -103,7 +103,17 @@ function submitOrder(side, symbol, alert) {
                                         async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
                                             if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
                                                 found = true;
-                                                inner_callback4();
+                                                var cancelorder_req = {
+                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + orderLeg2.orderId + '',
+                                                    method: 'DELETE',
+                                                    headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                                        'Authorization': 'Bearer ' + accesstoken
+                                                    }
+                                                }
+                                                request(cancelorder_req, function (error, response, body) {
+                                                    inner_callback4();
+                                                });
                                             }
                                             else
                                                 inner_callback4();
