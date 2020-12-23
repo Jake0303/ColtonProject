@@ -76,229 +76,44 @@ function submitOrder(side, symbol, alert) {
                             var orders = JSON.parse(body);
                             async.each(orders, function (order, inner_callback2) {
                                 console.log(order.childOrderStrategies);
-                                async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
-                                    async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
-                                        if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
-                                            //Cancel Order
-                                            var cancelorder_req = {
-                                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
-                                                method: 'DELETE',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                                    'Authorization': 'Bearer ' + accesstoken
-                                                }
-                                            }
-                                            request(cancelorder_req, function (error, response, body) {
-                                                inner_callback4();
-                                            });
-                                        }
-                                        else
-                                            inner_callback4();
-                                    }, function (err) {
-                                        inner_callback3();
-                                    });
-                                }, function (err) {
-                                    inner_callback2();
-                                });
-                            }, function (err) {
                                 /*
-                                * If we are short and get a buy signal, buy to cover and enter long
+                                * No bracket order just regular order
                                 */
-                                if (pos.shortQuantity || pos.settledShortQuantity) {
-                                    /*
-                                    * 1.) Exit short position
-                                    */
-                                    side = "BUY_TO_COVER";
+                                if (!order.childOrderStrategies) {
+                                    //Cancel Order
+                                    if (symbol == order.orderLegCollection[0].instrument.symbol.toUpperCase()) {
+                                        var cancelorder_req = {
+                                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                'Authorization': 'Bearer ' + accesstoken
+                                            }
+                                        }
+                                        request(cancelorder_req, function (error, response, body) {
+                                            inner_callback2();
+                                        });
+                                    }
                                 } else {
                                     /*
-                                    * 1.) Exit long position
+                                    * Cancel Bracket orders
                                     */
-                                    side = "SELL";
-                                }
-                                /*
-                                 * 3.) Exit out of previous position
-                                 */
-                                orderObject = {
-                                    "orderType": "MARKET",
-                                    "session": "NORMAL",
-                                    "duration": "DAY",
-                                    "orderStrategyType": "SINGLE",
-                                    "orderLegCollection": [
-                                        {
-                                            "instruction": side,
-                                            "quantity": qty,
-                                            "instrument": {
-                                                "symbol": symbol,
-                                                "assetType": "EQUITY"
-                                            }
-                                        }
-                                    ]
-                                }
-                                //Place Order
-                                var placeorder_req = {
-                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
-                                    method: 'POST',
-                                    headers: {
-                                        'Authorization': 'Bearer ' + accesstoken,
-                                        'content-type': 'application/json',
-                                        'connection': 'Keep-Alive'
-                                    },
-                                    body: orderObject,
-                                    json: true
-                                };
-                                setTimeout(function () {
-                                    request(placeorder_req, function (error, response, body) {
-                                        console.log(body);
-                                        console.log(side);
-                                        /*
-                                        * 4.) Enter new position
-                                        */
-                                        if (side == "BUY_TO_COVER")
-                                            side = "BUY";
-                                        else {
-                                            side = "SELL_SHORT";
-                                        }
-                                        orderObject = {
-                                            "orderType": "MARKET",
-                                            "session": "NORMAL",
-                                            "duration": "DAY",
-                                            "orderStrategyType": "SINGLE",
-                                            "orderLegCollection": [
-                                                {
-                                                    "instruction": side,
-                                                    "quantity": qty,
-                                                    "instrument": {
-                                                        "symbol": symbol,
-                                                        "assetType": "EQUITY"
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                        //Place Order
-                                        var placeorder_req = {
-                                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
-                                            method: 'POST',
-                                            headers: {
-                                                'Authorization': 'Bearer ' + accesstoken,
-                                                'content-type': 'application/json',
-                                                'connection': 'Keep-Alive'
-                                            },
-                                            body: orderObject,
-                                            json: true
-                                        };
-                                        request(placeorder_req, function (error, response, body) {
-                                            var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
-                                            var stopPrice = (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString();
-                                            /*
-                                             * Profit Target and Stop Loss OCO / Bracket Order
-                                             */
-                                            if (side == "BUY") {
-                                                side = "SELL";
+                                    async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
+                                        async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
+                                            if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
 
                                             }
-                                            else {
-                                                side = "BUY";
-                                                profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
-                                                stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
-                                            }
-                                            if (alert.profitTarget && alert.stopLoss) {
-                                                var orderObject = {
-                                                    "orderStrategyType": "OCO",
-                                                    "childOrderStrategies": [
-                                                        {
-                                                            "orderType": "LIMIT",
-                                                            "session": "NORMAL",
-                                                            "duration": "DAY",
-                                                            "price": profitPrice,
-                                                            "orderStrategyType": "SINGLE",
-                                                            "orderLegCollection": [
-                                                                {
-                                                                    "instruction": side,
-                                                                    "quantity": qty,
-                                                                    "instrument": {
-                                                                        "symbol": symbol,
-                                                                        "assetType": "EQUITY"
-                                                                    }
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "orderType": "STOP",
-                                                            "session": "NORMAL",
-                                                            "duration": "DAY",
-                                                            "stopPrice": stopPrice,
-                                                            "orderStrategyType": "SINGLE",
-                                                            "orderLegCollection": [
-                                                                {
-                                                                    "instruction": side,
-                                                                    "quantity": qty,
-                                                                    "instrument": {
-                                                                        "symbol": symbol,
-                                                                        "assetType": "EQUITY"
-                                                                    }
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                                //Place Order
-                                                var placeorder_req = {
-                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Authorization': 'Bearer ' + accesstoken,
-                                                        'content-type': 'application/json',
-                                                        'connection': 'Keep-Alive'
-                                                    },
-                                                    body: orderObject,
-                                                    json: true
-                                                };
-                                                request(placeorder_req, function (error, response, body) {
-                                                    inner_callback();
-                                                });
-                                            }
-                                            /*
-                                            * Just Profit Target
-                                            */
-                                            else if (alert.profitTarget) {
-                                                var orderObject = {
-                                                    "orderType": "LIMIT",
-                                                    "session": "NORMAL",
-                                                    "duration": "DAY",
-                                                    "price": profitPrice,
-                                                    "orderStrategyType": "SINGLE",
-                                                    "orderLegCollection": [
-                                                        {
-                                                            "instruction": side,
-                                                            "quantity": qty,
-                                                            "instrument": {
-                                                                "symbol": symbol,
-                                                                "assetType": "EQUITY"
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                                //Place Order
-                                                var placeorder_req = {
-                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Authorization': 'Bearer ' + accesstoken,
-                                                        'content-type': 'application/json',
-                                                        'connection': 'Keep-Alive'
-                                                    },
-                                                    body: orderObject,
-                                                    json: true
-                                                };
-                                                request(placeorder_req, function (error, response, body) {
-                                                    inner_callback();
-                                                });
-                                            }
+                                            else
+                                                inner_callback4();
+                                        }, function (err) {
+                                            inner_callback3();
                                         });
-
-
-                                    }, 10000);
-                                });
+                                    }, function (err) {
+                                        inner_callback2();
+                                    });
+                                }
+                            }, function (err) {
+                                exitAndReEnter(pos, accountId);
                             });
                         });
                     } else inner_callback();
@@ -456,6 +271,207 @@ function submitOrder(side, symbol, alert) {
             } S
         }
     });
+
+    function exitAndReEnter(pos, accountId) {
+        /*
+        * If we are short and get a buy signal, buy to cover and enter long
+        */
+        if (pos.shortQuantity || pos.settledShortQuantity) {
+            /*
+            * 1.) Exit short position
+            */
+            side = "BUY_TO_COVER";
+        } else {
+            /*
+            * 1.) Exit long position
+            */
+            side = "SELL";
+        }
+        /*
+         * 3.) Exit out of previous position
+         */
+        orderObject = {
+            "orderType": "MARKET",
+            "session": "NORMAL",
+            "duration": "DAY",
+            "orderStrategyType": "SINGLE",
+            "orderLegCollection": [
+                {
+                    "instruction": side,
+                    "quantity": qty,
+                    "instrument": {
+                        "symbol": symbol,
+                        "assetType": "EQUITY"
+                    }
+                }
+            ]
+        }
+        //Place Order
+        var placeorder_req = {
+            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accesstoken,
+                'content-type': 'application/json',
+                'connection': 'Keep-Alive'
+            },
+            body: orderObject,
+            json: true
+        };
+        setTimeout(function () {
+            request(placeorder_req, function (error, response, body) {
+                console.log(body);
+                console.log(side);
+                /*
+                * 4.) Enter new position
+                */
+                if (side == "BUY_TO_COVER")
+                    side = "BUY";
+                else {
+                    side = "SELL_SHORT";
+                }
+                orderObject = {
+                    "orderType": "MARKET",
+                    "session": "NORMAL",
+                    "duration": "DAY",
+                    "orderStrategyType": "SINGLE",
+                    "orderLegCollection": [
+                        {
+                            "instruction": side,
+                            "quantity": qty,
+                            "instrument": {
+                                "symbol": symbol,
+                                "assetType": "EQUITY"
+                            }
+                        }
+                    ]
+                }
+                //Place Order
+                var placeorder_req = {
+                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + accesstoken,
+                        'content-type': 'application/json',
+                        'connection': 'Keep-Alive'
+                    },
+                    body: orderObject,
+                    json: true
+                };
+                request(placeorder_req, function (error, response, body) {
+                    var profitPrice = (alert.close * (1 + (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                    var stopPrice = (alert.close * (1 - (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString();
+                    /*
+                     * Profit Target and Stop Loss OCO / Bracket Order
+                     */
+                    if (side == "BUY") {
+                        side = "SELL";
+
+                    }
+                    else {
+                        side = "BUY";
+                        profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
+                        stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
+                    }
+                    if (alert.profitTarget && alert.stopLoss) {
+                        var orderObject = {
+                            "orderStrategyType": "OCO",
+                            "childOrderStrategies": [
+                                {
+                                    "orderType": "LIMIT",
+                                    "session": "NORMAL",
+                                    "duration": "DAY",
+                                    "price": profitPrice,
+                                    "orderStrategyType": "SINGLE",
+                                    "orderLegCollection": [
+                                        {
+                                            "instruction": side,
+                                            "quantity": qty,
+                                            "instrument": {
+                                                "symbol": symbol,
+                                                "assetType": "EQUITY"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "orderType": "STOP",
+                                    "session": "NORMAL",
+                                    "duration": "DAY",
+                                    "stopPrice": stopPrice,
+                                    "orderStrategyType": "SINGLE",
+                                    "orderLegCollection": [
+                                        {
+                                            "instruction": side,
+                                            "quantity": qty,
+                                            "instrument": {
+                                                "symbol": symbol,
+                                                "assetType": "EQUITY"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                        //Place Order
+                        var placeorder_req = {
+                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + accesstoken,
+                                'content-type': 'application/json',
+                                'connection': 'Keep-Alive'
+                            },
+                            body: orderObject,
+                            json: true
+                        };
+                        request(placeorder_req, function (error, response, body) {
+                            inner_callback();
+                        });
+                    }
+                    /*
+                    * Just Profit Target
+                    */
+                    else if (alert.profitTarget) {
+                        var orderObject = {
+                            "orderType": "LIMIT",
+                            "session": "NORMAL",
+                            "duration": "DAY",
+                            "price": profitPrice,
+                            "orderStrategyType": "SINGLE",
+                            "orderLegCollection": [
+                                {
+                                    "instruction": side,
+                                    "quantity": qty,
+                                    "instrument": {
+                                        "symbol": symbol,
+                                        "assetType": "EQUITY"
+                                    }
+                                }
+                            ]
+                        }
+                        //Place Order
+                        var placeorder_req = {
+                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + accesstoken,
+                                'content-type': 'application/json',
+                                'connection': 'Keep-Alive'
+                            },
+                            body: orderObject,
+                            json: true
+                        };
+                        request(placeorder_req, function (error, response, body) {
+                            inner_callback();
+                        });
+                    }
+                });
+
+
+            }, 10000);
+        });
+    }
 }
 
 //Colton Alert
