@@ -104,7 +104,7 @@ function submitOrder(side, symbol, alert) {
                                             if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
                                                 found = true;
                                                 var cancelorder_req = {
-                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + orderLeg2.orderId + '',
+                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
                                                     method: 'DELETE',
                                                     headers: {
                                                         'Content-Type': 'application/x-www-form-urlencoded',
