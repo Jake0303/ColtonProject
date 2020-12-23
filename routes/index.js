@@ -125,8 +125,7 @@ function submitOrder(side, symbol, alert) {
                                     });
                                 }
                             }, function (err) {
-                                if (found)
-                                    exitAndReEnter(pos, accountId, inner_callback);
+                                exitAndReEnter(pos, accountId, inner_callback);
                             });
                         });
                     } else inner_callback();
@@ -382,7 +381,7 @@ function submitOrder(side, symbol, alert) {
 
                     }
                     else {
-                        side = "BUY";
+                        side = "BUY_TO_COVER";
                         profitPrice = (alert.close * (1 - (parseFloat(alert.profitTarget) / 100))).toFixed(2).toString();
                         stopPrice = (alert.close * (1 + (parseFloat(alert.stopLoss) / 100))).toFixed(2).toString()
                     }
