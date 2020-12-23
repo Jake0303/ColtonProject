@@ -91,9 +91,10 @@ function submitOrder(side, symbol, alert) {
                                             }
                                         }
                                         request(cancelorder_req, function (error, response, body) {
+                                            found = true;
                                             inner_callback2();
                                         });
-                                    }
+                                    } else inner_callback2();
                                 } else {
                                     /*
                                     * Cancel Bracket orders
@@ -101,7 +102,8 @@ function submitOrder(side, symbol, alert) {
                                     async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
                                         async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
                                             if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
-
+                                                found = true;
+                                                inner_callback4();
                                             }
                                             else
                                                 inner_callback4();
@@ -113,7 +115,8 @@ function submitOrder(side, symbol, alert) {
                                     });
                                 }
                             }, function (err) {
-                                exitAndReEnter(pos, accountId);
+                                if (found)
+                                    exitAndReEnter(pos, accountId);
                             });
                         });
                     } else inner_callback();
