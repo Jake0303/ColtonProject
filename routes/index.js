@@ -98,7 +98,7 @@ function submitOrder(side, symbol, alert) {
                                         /*
                                         * Cancel Bracket orders
                                         */
-                                        async.each(order.childOrderStrategies, function (orderLeg, inner_callback3) {
+                                        async.eachSeries(order.childOrderStrategies, function (orderLeg, inner_callback3) {
                                             async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
                                                 if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
                                                     found = true;
@@ -328,8 +328,8 @@ function submitOrder(side, symbol, alert) {
                 body: orderObject,
                 json: true
             };
-            setTimeout(function () {
-                request(placeorder_req, function (error, response, body) {
+            request(placeorder_req, function (error, response, body) {
+                setTimeout(function () {
                     console.log(side);
                     /*
                     * 4.) Enter new position
