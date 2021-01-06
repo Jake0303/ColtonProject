@@ -49,7 +49,7 @@ function submitOrder(side, symbol, alert) {
         request(account_req, function (error, response, body) {
             if (response.statusCode == 200 && !error && body && !body.error) {
                 body = JSON.parse(body);
-                async.each(body[0]['securitiesAccount']['positions'], function (pos, inner_callback) {
+                async.eachSeries(body[0]['securitiesAccount']['positions'], function (pos, inner_callback) {
                     /*
                      * Check if we have any existing positions, if we do flip sides
                      */
@@ -74,7 +74,7 @@ function submitOrder(side, symbol, alert) {
                                  * Loop and cancel all previous bracket orders
                                  */
                                 var orders = JSON.parse(body);
-                                async.each(orders, function (order, inner_callback2) {
+                                async.eachSeries(orders, function (order, inner_callback2) {
                                     /*
                                     * No bracket order just regular order
                                     */
@@ -99,7 +99,7 @@ function submitOrder(side, symbol, alert) {
                                         * Cancel Bracket orders
                                         */
                                         async.eachSeries(order.childOrderStrategies, function (orderLeg, inner_callback3) {
-                                            async.each(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
+                                            async.eachSeries(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
                                                 if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
                                                     found = true;
                                                     var cancelorder_req = {
@@ -286,7 +286,7 @@ function submitOrder(side, symbol, alert) {
             * If we are short and get a buy signal, buy to cover and enter long
             */
             console.log(pos);
-            if (pos.shortQuantity || pos.settledShortQuantity) {
+            if (pos.shortQuantity > 0) {
                 /*
                 * 1.) Exit short position
                 */
