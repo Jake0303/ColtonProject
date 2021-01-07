@@ -479,11 +479,11 @@ function submitOrder(side, symbol, alert) {
                                     inner_callback();
                                 });
                             }
-                        }, 3000);
+                        }, 2000);
                     });
 
 
-                }, 10000);
+                }, 5000);
             });
         }
     } catch (err) {
