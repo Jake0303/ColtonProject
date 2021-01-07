@@ -54,81 +54,82 @@ function submitOrder(side, symbol, alert) {
                      * Check if we have any existing positions, if we do flip sides
                      */
                     try {
-                        if (pos.instrument.symbol.toUpperCase() == symbol
-                            && ((side != "BUY" && pos.longQuantity)
-                                || side != "SELL" && pos.shortQuantity)) {
+                        if (pos.instrument.symbol.toUpperCase() == symbol) {
                             found = true;
-                            var accountId = body[0]['securitiesAccount']['accountId'];
-                            /*
-                             * 2.) Cancel previous orders
-                             */
-                            //Get current orders
-                            var order_req = {
-                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
-                                method: 'GET',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                    'Authorization': 'Bearer ' + accesstoken
-                                }
-                            }
-                            request(order_req, function (error, response, body) {
+                            if (((side != "BUY" && pos.longQuantity)
+                                || side != "SELL" && pos.shortQuantity)) {
+                                var accountId = body[0]['securitiesAccount']['accountId'];
                                 /*
-                                 * Loop and cancel all previous bracket orders
+                                 * 2.) Cancel previous orders
                                  */
-                                var orders = JSON.parse(body);
-                                async.eachSeries(orders, function (order, inner_callback2) {
+                                //Get current orders
+                                var order_req = {
+                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders',
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'Authorization': 'Bearer ' + accesstoken
+                                    }
+                                }
+                                request(order_req, function (error, response, body) {
                                     /*
-                                    * No bracket order just regular order
-                                    */
-                                    if (!order.childOrderStrategies) {
-                                        //Cancel Order
-                                        if (symbol == order.orderLegCollection[0].instrument.symbol.toUpperCase()) {
-                                            var cancelorder_req = {
-                                                url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
-                                                method: 'DELETE',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                                    'Authorization': 'Bearer ' + accesstoken
+                                     * Loop and cancel all previous bracket orders
+                                     */
+                                    var orders = JSON.parse(body);
+                                    async.eachSeries(orders, function (order, inner_callback2) {
+                                        /*
+                                        * No bracket order just regular order
+                                        */
+                                        if (!order.childOrderStrategies) {
+                                            //Cancel Order
+                                            if (symbol == order.orderLegCollection[0].instrument.symbol.toUpperCase()) {
+                                                var cancelorder_req = {
+                                                    url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
+                                                    method: 'DELETE',
+                                                    headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                                        'Authorization': 'Bearer ' + accesstoken
+                                                    }
                                                 }
-                                            }
-                                            request(cancelorder_req, function (error, response, body) {
-                                                found = true;
+                                                request(cancelorder_req, function (error, response, body) {
+                                                    found = true;
+                                                    inner_callback2();
+                                                });
+                                            } else inner_callback2();
+                                        } else {
+                                            /*
+                                            * Cancel Bracket orders
+                                            */
+                                            async.eachSeries(order.childOrderStrategies, function (orderLeg, inner_callback3) {
+                                                async.eachSeries(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
+                                                    if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
+                                                        found = true;
+                                                        var cancelorder_req = {
+                                                            url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
+                                                            method: 'DELETE',
+                                                            headers: {
+                                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                                'Authorization': 'Bearer ' + accesstoken
+                                                            }
+                                                        }
+                                                        request(cancelorder_req, function (error, response, body) {
+                                                            inner_callback4();
+                                                        });
+                                                    }
+                                                    else
+                                                        inner_callback4();
+                                                }, function (err) {
+                                                    inner_callback3();
+                                                });
+                                            }, function (err) {
                                                 inner_callback2();
                                             });
-                                        } else inner_callback2();
-                                    } else {
-                                        /*
-                                        * Cancel Bracket orders
-                                        */
-                                        async.eachSeries(order.childOrderStrategies, function (orderLeg, inner_callback3) {
-                                            async.eachSeries(orderLeg.orderLegCollection, function (orderLeg2, inner_callback4) {
-                                                if (symbol == orderLeg2.instrument.symbol.toUpperCase()) {
-                                                    found = true;
-                                                    var cancelorder_req = {
-                                                        url: 'https://api.tdameritrade.com/v1/accounts/' + accountId + '/orders/' + order.orderId + '',
-                                                        method: 'DELETE',
-                                                        headers: {
-                                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                                            'Authorization': 'Bearer ' + accesstoken
-                                                        }
-                                                    }
-                                                    request(cancelorder_req, function (error, response, body) {
-                                                        inner_callback4();
-                                                    });
-                                                }
-                                                else
-                                                    inner_callback4();
-                                            }, function (err) {
-                                                inner_callback3();
-                                            });
-                                        }, function (err) {
-                                            inner_callback2();
-                                        });
-                                    }
-                                }, function (err) {
-                                    exitAndReEnter(pos, accountId, inner_callback);
+                                        }
+                                    }, function (err) {
+                                        exitAndReEnter(pos, accountId, inner_callback);
+                                    });
                                 });
-                            });
+                            } else inner_callback();
                         } else inner_callback();
                     } catch (err) {
                         console.log(err);
